@@ -1,0 +1,17 @@
+name: DeepCaveSpiders
+version: '${project.version}'
+main: dev.satyrn.deepcavespiders.DeepCaveSpiders
+api-version: 1.18
+prefix: deepcavespiders
+authors: [ satyrnidae ]
+description: Spawns cave spiders in deep caves!
+website: https://satyrn.dev/projects/deepcavespiders
+commands:
+  deepcavespiders:
+    description: Manages the plugin.
+    usage: /<command>
+    permission: deepcavespiders.admin
+permissions:
+  deepcavespiders.admin:
+    default: op
+    description: Allows a user to reload the plugin's configuration file.

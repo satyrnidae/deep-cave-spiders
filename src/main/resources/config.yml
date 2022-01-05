@@ -1,0 +1,61 @@
+# The locale to use while translating chat messages.
+# Default value: en_US.
+locale: "en_US"
+# Options for spawning the cave spiders.
+spawnOptions:
+  # Spawning height range.
+  range:
+    # The minimum Y level that cave spiders will spawn.
+    # Default value: -64
+    minY: -64
+    # The maximum Y level that cave spiders will spawn.
+    # Default value: -8
+    maxY: -8
+  # Chances that a cave spider will replace a normal spider within the given range.
+  # Settings are between 0 and 1, separated by difficulty level.
+  chances:
+    # Easy mode spawn rates.
+    # Default value: 0.05, or 1 in 20.
+    easy: 0.05
+    # Normal mode spawn rates.
+    # Default value: 0.1, or 1 in 10.
+    normal: 0.1
+    # Hard mode spawn rated.
+    # Default value: 0.5, or 1 in 2.
+    hard: 0.5
+  # Chance for a cave spider to spawn a baby zombie as a rider.
+  # Only applies on Hard difficulty.
+  # Values are between 0 and 1.
+  # Defaults to 0.1, or 1 in 10 cave spiders.
+  jockeyChance: 0.1
+# Biomes in which the cave spiders will spawn.
+# Valid values: https://papermc.io/javadocs/paper/1.18/org/bukkit/block/Biome.html
+biomes:
+  - badlands
+  - bamboo_jungle
+  - birch_forest
+  - dark_forest
+  - desert
+  - flower_forest
+  - forest
+  - grove
+  - jagged_peaks
+  - jungle
+  - meadow
+  - plains
+  - savanna
+  - savanna_plateau
+  - sparse_jungle
+  - stony_peaks
+  - sunflower_plains
+  - swamp
+  - windswept_forest
+  - windswept_gravelly_hills
+  - windswept_hills
+  - windswept_savanna
+  - wooded_badlands
+# The environments in which cave spiders will spawn.
+# By default, only affects NORMAL environments.
+# Valid values: https://papermc.io/javadocs/paper/1.18/org/bukkit/World.Environment.html
+environments:
+  - normal
