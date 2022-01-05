@@ -70,7 +70,7 @@ public final class Configuration extends ConfigurationContainer {
      * @return The spawn chance.
      */
     public double getSpawnChance(Difficulty difficulty) {
-        switch(difficulty) {
+        switch (difficulty) {
             case EASY -> {
                 return this.spawnOptions.chances.easy.value();
             }

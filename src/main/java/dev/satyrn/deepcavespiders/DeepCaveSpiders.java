@@ -15,21 +15,38 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the Deep Cave Spiders plugin.
+ *
+ * @author Isabel Maskrey
+ * @since 1.0-SNAPSHOT
+ */
 public final class DeepCaveSpiders extends JavaPlugin {
+    // Event listener for entity spawn events.
     private SpawnEntityListener spawnEntityListener;
-    private Configuration configuration;
+    // Internationalization instance.
     private I18n i18n;
 
+    /**
+     * Called when the plugin is enabled.
+     */
     @Override
     public void onEnable() {
         this.registerEvents();
-        this.configuration = new Configuration(this);
+
+        Configuration configuration = new Configuration(this);
+
         this.i18n.setLocale(configuration.getLocale());
-        spawnEntityListener.load(configuration);
+        this.spawnEntityListener.load(configuration);
+
         this.registerCommands();
+
         this.getLogger().info("DeepCaveSpiders has been successfully enabled!");
     }
 
+    /**
+     * Called when the plugin is loaded.
+     */
     @Override
     public void onLoad() {
         this.getLogger().info("Initializing DeepCaveSpiders...");
@@ -38,15 +55,16 @@ public final class DeepCaveSpiders extends JavaPlugin {
     }
 
     /**
-     * {@inheritDoc}
+     * Requests a list of possible completion options for a command.
      *
-     * @param sender
-     * @param command
-     * @param alias
-     * @param args
+     * @param sender The command sender.
+     * @param command The command.
+     * @param alias The command alias.
+     * @param args The command arguments.
+     * @return A list of all possible completions for the current argument.
      */
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         final List<String> completionOptions = new ArrayList<>();
         if ("deepcavespiders".equalsIgnoreCase(command.getName())) {
             if (args.length == 1) {
@@ -59,7 +77,13 @@ public final class DeepCaveSpiders extends JavaPlugin {
     }
 
     /**
-     * {@inheritDoc}
+     * Executes the given command, returning whether it was successful.
+     *
+     * @param sender The command sender
+     * @param command The command to execute.
+     * @param label The command alias
+     * @param args The command arguments.
+     * @return {@code true} if the command was executed successfully; otherwise, {@code false}
      */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -87,7 +111,9 @@ public final class DeepCaveSpiders extends JavaPlugin {
         return false;
     }
 
-
+    /**
+     * Registers event listeners.
+     */
     private void registerEvents() {
         if (this.spawnEntityListener == null) {
             this.spawnEntityListener = new SpawnEntityListener();
@@ -98,6 +124,9 @@ public final class DeepCaveSpiders extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(this.spawnEntityListener, this);
     }
 
+    /**
+     * Registers commands.
+     */
     private void registerCommands() {
         final PluginCommand deepCaveSpiders = this.getServer().getPluginCommand("deepcavespiders");
         if (deepCaveSpiders != null) {
@@ -106,9 +135,10 @@ public final class DeepCaveSpiders extends JavaPlugin {
         }
     }
 
-
     /**
      * Initializes the internationalization handler.
+     *
+     * @return The internationalization handler
      */
     private I18n initializeI18n() {
         // Initialize internationalization handler.

@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 /**
- * Message internationalization for Experience Economy
+ * Message internationalization for the plugin
  *
  * @author Isabel Maskrey
  * @since 1.0-SNAPSHOT
@@ -131,9 +131,7 @@ public final class I18n {
             try {
                 messageFormat = new MessageFormat(resourceString);
             } catch (IllegalArgumentException ex) {
-                this.plugin.getLogger().log(Level.SEVERE,
-                        String.format("Invalid Translation Key for \"%s\": %s", key, ex.getMessage()),
-                        ex);
+                this.plugin.getLogger().log(Level.SEVERE, String.format("Invalid Translation Key for \"%s\": %s", key, ex.getMessage()), ex);
                 resourceString = resourceString.replaceAll("\\{(\\D*?)}", "\\[$1\\]");
                 messageFormat = new MessageFormat(resourceString);
             }
@@ -152,9 +150,7 @@ public final class I18n {
         try {
             return localeBundle.getString(key);
         } catch (MissingResourceException ex) {
-            this.plugin.getLogger().log(Level.WARNING,
-                    String.format("Missing translation key \"%s\" in resource file \"%s.lang\"", ex.getKey(),
-                            localeBundle.getLocale()), ex);
+            this.plugin.getLogger().log(Level.WARNING, String.format("Missing translation key \"%s\" in resource file \"%s.lang\"", ex.getKey(), localeBundle.getLocale()), ex);
         }
         try {
             return defaultBundle.getString(key);
@@ -178,8 +174,7 @@ public final class I18n {
          * @return A new ResourceBundle from the language file.
          * @throws IOException Occurs when the bundle file cannot be located or read.
          */
-        public ResourceBundle newBundle(final String baseName, final Locale locale, final String format,
-                                        final ClassLoader classLoader, final boolean reload) throws IOException {
+        public ResourceBundle newBundle(final String baseName, final Locale locale, final String format, final ClassLoader classLoader, final boolean reload) throws IOException {
             final String resourceName = this.toResourceName(this.toBundleName(baseName, locale), "lang");
             ResourceBundle bundle = null;
             InputStream stream = null;

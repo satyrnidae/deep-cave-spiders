@@ -31,9 +31,14 @@ public class SpawnEntityListener implements Listener {
     private double normalSpawnChance;
     // Spawn chances for hard difficulty.
     private double hardSpawnChance;
+    // Chance that a jockey will spawn on a cave spider.
     private double riderChance;
-    @NotNull private List<Biome> biomes = new ArrayList<>();
-    @NotNull private List<World.Environment> environments = new ArrayList<>();
+    // The list of allowed biomes.
+    @NotNull
+    private List<Biome> biomes = new ArrayList<>();
+    // The list of allowed environments.
+    @NotNull
+    private List<World.Environment> environments = new ArrayList<>();
 
     /**
      * Loads the configuration instance.
@@ -53,25 +58,21 @@ public class SpawnEntityListener implements Listener {
     }
 
     /**
-     * Handles the entity spawn event. If all conditions are met the
-     * spawned entity is replaced with a cave spider.
+     * Handles creature spawn events for spiders.
+     *
      * @param event The event.
      */
     @EventHandler
     public void onSpawnSpider(CreatureSpawnEvent event) {
         // Only replace spider spawns, but exclude cave spider spawns,
         // and don't replace jockeys.
-        if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.NATURAL
-                || !(event.getEntity() instanceof Spider)
-                || event.getEntity() instanceof CaveSpider) {
+        if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.NATURAL || !(event.getEntity() instanceof Spider) || event.getEntity() instanceof CaveSpider) {
             return;
         }
         // Location validation. Should only spawn between min and max spawn heights,
         // and should not spawn in liquids.
         final Location location = event.getLocation();
-        if (location.getBlockY() < this.minSpawnHeight
-                || location.getBlockY() > this.maxSpawnHeight
-                || location.getBlock().isLiquid()) {
+        if (location.getBlockY() < this.minSpawnHeight || location.getBlockY() > this.maxSpawnHeight || location.getBlock().isLiquid()) {
             return;
         }
         // World validation. Should only spawn in configured environments and biomes,
@@ -82,8 +83,7 @@ public class SpawnEntityListener implements Listener {
         if (spawnChance <= 0D) {
             return;
         }
-        if (!this.environments.contains(world.getEnvironment())
-                || !this.biomes.contains(world.getBiome(location))) {
+        if (!this.environments.contains(world.getEnvironment()) || !this.biomes.contains(world.getBiome(location))) {
             return;
         }
 
@@ -94,19 +94,24 @@ public class SpawnEntityListener implements Listener {
         }
     }
 
+    /**
+     * Handles creature spawn events for cave spiders.
+     *
+     * @param event The event.
+     */
     @EventHandler
     public void onSpawnCaveSpider(CreatureSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL
-                || event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.EGG) {
+        // Only apply to naturally / egg spawned creatures.
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL || event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.EGG) {
+            // Make sure the creature is a cave spider.
             final Entity entity = event.getEntity();
             if (entity instanceof CaveSpider) {
+
                 final Location location = event.getLocation();
                 final World world = location.getWorld();
 
                 // Spawn a baby zombie as a jockey, if spawn chance is > 0 and world difficulty is set to hard.
-                if (this.riderChance > 0D
-                        && world.getDifficulty() == Difficulty.HARD
-                        && Math.random() < this.riderChance) {
+                if (this.riderChance > 0D && world.getDifficulty() == Difficulty.HARD && Math.random() < this.riderChance) {
                     final Biome biome = world.getBiome(location);
                     final @NotNull EntityType jockeyType;
                     switch (biome) {
@@ -123,6 +128,12 @@ public class SpawnEntityListener implements Listener {
         }
     }
 
+    /**
+     * Gets the spawn chance for a specific difficulty.
+     *
+     * @param difficulty The world difficulty.
+     * @return The spawn chance for the given difficulty.
+     */
     public double getSpawnChance(Difficulty difficulty) {
         switch (difficulty) {
             case EASY -> {

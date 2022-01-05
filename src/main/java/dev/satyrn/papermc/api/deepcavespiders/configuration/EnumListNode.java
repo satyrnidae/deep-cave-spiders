@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Represents a configuration node with a list of enum values.
+ *
  * @param <E> The enum type.
  * @author Isabel Maskrey
  * @since v2
@@ -17,7 +18,7 @@ public abstract class EnumListNode<E extends Enum<E>> extends ConfigurationNode<
      * Creates a new configuration node with a list of enum values.
      *
      * @param parent The parent configuration.
-     * @param name The node's name.
+     * @param name   The node's name.
      */
     public EnumListNode(final @NotNull ConfigurationContainer parent, final @NotNull String name) {
         super(parent, name, parent.config);
