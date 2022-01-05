@@ -107,9 +107,17 @@ public class SpawnEntityListener implements Listener {
                 if (this.riderChance > 0D
                         && world.getDifficulty() == Difficulty.HARD
                         && Math.random() < this.riderChance) {
-                    Zombie babyZombie = (Zombie) world.spawnEntity(location, EntityType.ZOMBIE, CreatureSpawnEvent.SpawnReason.JOCKEY);
-                    babyZombie.setBaby();
-                    entity.addPassenger(babyZombie);
+                    final Biome biome = world.getBiome(location);
+                    final @NotNull EntityType jockeyType;
+                    switch (biome) {
+                        case DESERT -> jockeyType = EntityType.HUSK;
+                        case NETHER_WASTES, CRIMSON_FOREST, WARPED_FOREST, SOUL_SAND_VALLEY -> jockeyType = EntityType.ZOMBIFIED_PIGLIN;
+                        default -> jockeyType = EntityType.ZOMBIE;
+
+                    }
+                    final @NotNull Zombie jockey = (Zombie) world.spawnEntity(location, jockeyType, CreatureSpawnEvent.SpawnReason.JOCKEY);
+                    jockey.setBaby();
+                    entity.addPassenger(jockey);
                 }
             }
         }
