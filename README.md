@@ -1,7 +1,7 @@
 # Deep Cave Spiders
-![Java CI with Maven](https://github.com/satyrnidae/deep-cave-spiders/actions/workflows/maven.yml/badge.svg)
-![CurseForge Downloads](https://cf.way2muchnoise.eu/564627.svg)
-![Available For](https://cf.way2muchnoise.eu/versions/564627.svg)
+[![Java CI with Maven](https://github.com/satyrnidae/deep-cave-spiders/actions/workflows/maven.yml/badge.svg)](https://github.com/satyrnidae/deep-cave-spiders/actions)
+[![CurseForge Downloads](https://cf.way2muchnoise.eu/564627.svg)](https://dev.bukkit.org/projects/deep-cave-spiders)
+[![Available For](https://cf.way2muchnoise.eu/versions/564627.svg)](https://dev.bukkit.org/projects/deep-cave-spiders/files)
 
 Today in "plugins nobody asked for", I am proud to introduce you to Deep Cave Spiders, a plugin for PaperMC 1.18 and above!
 
@@ -98,15 +98,19 @@ In lieu of this, the command `/deepcavespiders reload` can be used to reload and
 
 The following commands are provided by this plugin:
 
-### `/deepcavespiders`
-> Used to print information about the plugin. the `reload` subcommand can be specified to reload the configuration file.
+<details><summary>/deepcavespiders</summary>
+
+Used to print information about the plugin. the `reload` subcommand can be specified to reload the configuration file.
+</details>
 
 ## Permissions
 
 This plugin implements the following permissions:
 
-### `deepcavespiders.admin`
-> Grants access to the `/deepcavespiders reload` subcommand.
+<details><summary>deepcavespiders.admin</summary>
+
+Grants access to the `/deepcavespiders reload` subcommand.
+</details>
 
 ## Issues
 
