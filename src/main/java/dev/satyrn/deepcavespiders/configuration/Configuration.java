@@ -1,6 +1,7 @@
 package dev.satyrn.deepcavespiders.configuration;
 
-import dev.satyrn.papermc.api.deepcavespiders.configuration.*;
+import dev.satyrn.papermc.api.configuration.v1.*;
+import dev.satyrn.papermc.api.configuration.v2.*;
 import org.bukkit.Difficulty;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
