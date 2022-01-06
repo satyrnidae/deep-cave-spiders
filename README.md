@@ -1,7 +1,6 @@
 # Deep Cave Spiders
 [![Java CI with Maven](https://github.com/satyrnidae/deep-cave-spiders/actions/workflows/maven.yml/badge.svg)](https://github.com/satyrnidae/deep-cave-spiders/actions)
 [![CurseForge Downloads](https://cf.way2muchnoise.eu/564627.svg)](https://dev.bukkit.org/projects/deep-cave-spiders)
-[![Available For](https://cf.way2muchnoise.eu/versions/564627.svg)](https://dev.bukkit.org/projects/deep-cave-spiders/files)
 
 Today in "plugins nobody asked for", I am proud to introduce you to Deep Cave Spiders, a plugin for PaperMC 1.18 and above!
 
@@ -9,7 +8,7 @@ Today in "plugins nobody asked for", I am proud to introduce you to Deep Cave Sp
 
 ## Why? Just... Why?
 
-Ask yourself: when was the last time you really felt like travelling through caves was dangerous? When was the last time you had to sit down and prepare for a jaunt into the darkest depths of your world? When did you last think to yourself, "I hope I don't get poisoned while I'm down there"?
+Ask yourself: When was the last time you really felt like you had to prepare before delving deep under the surface? When did you last feel that doing so was actually dangerous?
 
 This plugin lets you have a small taste of that as you dig deeper and yet deeper into your world. An in-depth configuration system will allow you to tweak your experience as you see fit, setting minimum and maximum spawn depths and configuring spawn chance by difficulty.
 
@@ -84,7 +83,6 @@ biomes:
 # Valid values: https://papermc.io/javadocs/paper/1.18/org/bukkit/World.Environment.html
 environments:
   - normal
-
 ```
 </details>
 
@@ -115,4 +113,3 @@ Grants access to the `/deepcavespiders reload` subcommand.
 ## Issues
 
 If you encounter any issues with the plugin, please report them on our [Github Issue Tracker](https://github.com/satyrnidae/deep-cave-spiders)!
-

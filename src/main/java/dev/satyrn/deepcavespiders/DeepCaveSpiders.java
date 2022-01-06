@@ -10,7 +10,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.List;
  * @author Isabel Maskrey
  * @since 1.0-SNAPSHOT
  */
+@SuppressWarnings("unused")
 public final class DeepCaveSpiders extends JavaPlugin {
     // Event listener for entity spawn events.
     private SpawnEntityListener spawnEntityListener;
@@ -29,6 +29,8 @@ public final class DeepCaveSpiders extends JavaPlugin {
 
     /**
      * Called when the plugin is enabled.
+     *
+     * @since 1.0-SNAPSHOT
      */
     @Override
     public void onEnable() {
@@ -46,6 +48,8 @@ public final class DeepCaveSpiders extends JavaPlugin {
 
     /**
      * Called when the plugin is loaded.
+     *
+     * @since 1.0-SNAPSHOT
      */
     @Override
     public void onLoad() {
@@ -62,13 +66,14 @@ public final class DeepCaveSpiders extends JavaPlugin {
      * @param alias The command alias.
      * @param args The command arguments.
      * @return A list of all possible completions for the current argument.
+     * @since 1.0-SNAPSHOT
      */
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         final List<String> completionOptions = new ArrayList<>();
         if ("deepcavespiders".equalsIgnoreCase(command.getName())) {
             if (args.length == 1) {
-                if (command.testPermission(sender)) {
+                if (sender.hasPermission("deepcavespiders.admin")) {
                     completionOptions.add("reload");
                 }
             }
@@ -84,12 +89,13 @@ public final class DeepCaveSpiders extends JavaPlugin {
      * @param label The command alias
      * @param args The command arguments.
      * @return {@code true} if the command was executed successfully; otherwise, {@code false}
+     * @since 1.0-SNAPSHOT
      */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if ("deepcavespiders".equalsIgnoreCase(command.getName())) {
             if (args.length >= 1 && "reload".equalsIgnoreCase(args[0])) {
-                if (command.testPermission(sender)) {
+                if (sender.hasPermission("deepcavespiders.admin")) {
                     this.reloadConfig();
                     final Configuration configuration = new Configuration(this);
                     this.spawnEntityListener.load(configuration);
@@ -99,7 +105,9 @@ public final class DeepCaveSpiders extends JavaPlugin {
                 }
             } else {
                 sender.sendMessage(I18n.tr("command.about",
+                        this.getDescription().getName(),
                         this.getDescription().getVersion(),
+                        String.join(", ", this.getDescription().getAuthors()),
                         this.spawnEntityListener.maxSpawnHeight,
                         this.spawnEntityListener.minSpawnHeight,
                         this.spawnEntityListener.getSpawnChance(Difficulty.EASY),
@@ -113,6 +121,8 @@ public final class DeepCaveSpiders extends JavaPlugin {
 
     /**
      * Registers event listeners.
+     *
+     * @since 1.0-SNAPSHOT
      */
     private void registerEvents() {
         if (this.spawnEntityListener == null) {
@@ -126,6 +136,8 @@ public final class DeepCaveSpiders extends JavaPlugin {
 
     /**
      * Registers commands.
+     *
+     * @since 1.0-SNAPSHOT
      */
     private void registerCommands() {
         final PluginCommand deepCaveSpiders = this.getServer().getPluginCommand("deepcavespiders");
@@ -139,6 +151,7 @@ public final class DeepCaveSpiders extends JavaPlugin {
      * Initializes the internationalization handler.
      *
      * @return The internationalization handler
+     * @since 1.0-SNAPSHOT
      */
     private I18n initializeI18n() {
         // Initialize internationalization handler.

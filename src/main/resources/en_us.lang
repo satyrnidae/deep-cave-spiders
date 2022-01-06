@@ -1,3 +1,3 @@
-command.about=§aDeep Cave Spiders§r version §a{0}§r by satyrnidae.\nMax level: §e{1}§r\nMin level: §e{2}§r\nSpawn chance: §e{3}§r/§e{4}§r/§e{5}§r
+command.about=§a{0} v{1}§r by {2}.\nMax level: §e{3}§r\nMin level: §e{4}§r\nSpawn chance: §e{5}§r/§e{6}§r/§e{7}§r
 command.reload=§aReloaded Deep Cave Spiders configuration!§r
 command.reload.deny=§cYou don't have permission to reload the configuration files!§r
