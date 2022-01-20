@@ -6,7 +6,7 @@
 
     <groupId>dev.satyrn</groupId>
     <artifactId>deep-cave-spiders</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <name>DeepCaveSpiders</name>
@@ -63,6 +63,24 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -70,6 +88,13 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>3.5.1</version>
+            </extension>
+        </extensions>
     </build>
 
     <pluginRepositories>
@@ -104,7 +129,30 @@
         <dependency>
             <groupId>dev.satyrn</groupId>
             <artifactId>papermc-api</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.5-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>ftp.satyrn.dev</id>
+            <name>Artifact Deployment</name>
+            <url>sftp://ftp.satyrn.dev:22/maven</url>
+        </repository>
+        <site>
+            <id>ftp.satyrn.dev</id>
+            <name>Site deployments</name>
+            <url>sftp://ftp.satyrn.dev:22/sites/${project.artifactId}/</url>
+        </site>
+    </distributionManagement>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

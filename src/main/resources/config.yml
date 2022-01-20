@@ -11,6 +11,20 @@ spawnOptions:
     # The maximum Y level that cave spiders will spawn.
     # Default value: -8
     maxY: -8
+    # Allow spiders to spawn below the minimum Y height.
+    # This is useful for customizing the spawn distribution ramp function; spawns below the minimum Y value are
+    #   guaranteed to use a constant spawn chance as set in the chances section below.
+    # Defaults to false.
+    allowSpawnsBelowMinY: false
+  # Spawn distribution function. Affects how often cave spiders spawn in the world.
+  # Valid values are constant, hyperbolic, linear, and logarithmic
+  # In order of slowest to quickest ramp-up speed:
+  # - Hyperbolic distribution ramps up slowly at first but increases in likelihood the further down you go.
+  # - Linear distribution ramps up at a constant rate the further down you go.
+  # - Logarithmic distribution ramps up very quickly at first but slows down the further down you go.
+  # - Constant distribution is the same no matter what depth the spider is spawning at.
+  # Defaults to constant.
+  distribution: constant
   # Chances that a cave spider will replace a normal spider within the given range.
   # Settings are between 0 and 1, separated by difficulty level.
   chances:
@@ -59,3 +73,9 @@ biomes:
 # Valid values: https://papermc.io/javadocs/paper/1.18/org/bukkit/World.Environment.html
 environments:
   - normal
+# A list of all of the entity types that cave spiders can replace.
+# Defaults to include only spiders.
+# Only replaces natural spawns.
+# Valid values: https://papermc.io/javadocs/paper/1.18/org/bukkit/entity/EntityType.html
+replaceEntities:
+  - spider

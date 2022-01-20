@@ -1,15 +1,18 @@
 package dev.satyrn.deepcavespiders.configuration;
 
+import dev.satyrn.deepcavespiders.DeepCaveSpiders;
+import dev.satyrn.deepcavespiders.util.SpawnDistribution;
 import dev.satyrn.papermc.api.configuration.v1.*;
 import dev.satyrn.papermc.api.configuration.v2.*;
-import org.bukkit.Difficulty;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
 
 /**
  * Represents the configuration for the plugin.
@@ -18,22 +21,64 @@ import java.util.Locale;
  * @since 1.0-SNAPSHOT
  */
 public final class Configuration extends ConfigurationContainer {
-    // The locale to use for internationalization.
-    private final transient StringNode locale = new StringNode(this, "locale");
-    // Spawn options container.
-    private final transient SpawnOptionsContainer spawnOptions = new SpawnOptionsContainer(this);
-    // List of biomes that cave spiders will be allowed to spawn in.
-    private final transient EnumListNode<Biome> biomes = new EnumListNode<>(this, "biomes") {
+    /**
+     * The locale to use for internationalization.
+     */
+    public final transient StringNode locale = new StringNode(this, "locale");
+
+    /**
+     * The spawning options.
+     */
+    public final transient SpawnOptionsContainer spawnOptions = new SpawnOptionsContainer(this);
+
+    /**
+     * List of biomes in which cave spiders should be allowed to spawn.
+     */
+    public final transient EnumListNode<Biome> biomes = new EnumListNode<>(this, "biomes") {
         @Override
         protected @NotNull Biome parse(@NotNull String value) throws IllegalArgumentException {
-            return Biome.valueOf(value.toUpperCase(Locale.ROOT));
+            try {
+                return Biome.valueOf(value.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException ex) {
+                JavaPlugin.getPlugin(DeepCaveSpiders.class)
+                        .getLogger()
+                        .log(Level.WARNING, String.format("Invalid biome present in configuration: %s. This entry will be excluded.", value));
+                throw ex;
+            }
         }
     };
-    // List of environments that cave spiders will be allowed to spawn in.
-    private final transient EnumListNode<World.Environment> environments = new EnumListNode<>(this, "environments") {
+
+    /**
+     * List of environments in which cave spiders should be allowed to spawn.
+     */
+    public final transient EnumListNode<World.Environment> environments = new EnumListNode<>(this, "environments") {
         @Override
         protected @NotNull World.Environment parse(@NotNull String value) throws IllegalArgumentException {
-            return World.Environment.valueOf(value.toUpperCase(Locale.ROOT));
+            try {
+                return World.Environment.valueOf(value.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException ex) {
+                JavaPlugin.getPlugin(DeepCaveSpiders.class)
+                        .getLogger()
+                        .log(Level.WARNING, String.format("Invalid environment present in configuration: %s. This entry will be excluded.", value));
+                throw ex;
+            }
+        }
+    };
+
+    /**
+     * List of entity types which may be replaced by cave spiders.
+     */
+    public final EnumListNode<EntityType> replaceEntities = new EnumListNode<EntityType>(this, "replaceEntities") {
+        @Override
+        protected @NotNull EntityType parse(@NotNull String value) throws IllegalArgumentException {
+            try {
+                return EntityType.valueOf(value.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException ex) {
+                JavaPlugin.getPlugin(DeepCaveSpiders.class)
+                        .getLogger()
+                        .log(Level.WARNING, String.format("Invalid replaceable entity type present in configuration: %s. This entry will be excluded.", value));
+                throw ex;
+            }
         }
     };
 
@@ -47,95 +92,54 @@ public final class Configuration extends ConfigurationContainer {
     }
 
     /**
-     * Gets the maximum spawn height.
-     *
-     * @return The maximum spawn height.
-     */
-    public int getMaxY() {
-        return this.spawnOptions.range.maxY.value();
-    }
-
-    /**
-     * Gets the minimum spawn height.
-     *
-     * @return The minimum spawn height.
-     */
-    public int getMinY() {
-        return this.spawnOptions.range.minY.value();
-    }
-
-    /**
-     * Gets the spawn chance.
-     *
-     * @param difficulty The world difficulty.
-     * @return The spawn chance.
-     */
-    public double getSpawnChance(Difficulty difficulty) {
-        switch (difficulty) {
-            case EASY -> {
-                return this.spawnOptions.chances.easy.value();
-            }
-            case NORMAL -> {
-                return this.spawnOptions.chances.normal.value();
-            }
-            case HARD -> {
-                return this.spawnOptions.chances.hard.value();
-            }
-        }
-        return 0D;
-    }
-
-    /**
-     * Gets the rider chance.
-     *
-     * @return The rider chance.
-     */
-    public double getJockeyChance() {
-        return this.spawnOptions.jockeyChance.value();
-    }
-
-    /**
-     * Gets the biome whitelist.
-     *
-     * @return The biome whitelist.
-     */
-    public @NotNull List<Biome> getBiomes() {
-        return this.biomes.value();
-    }
-
-    /**
-     * Gets the environment whitelist.
-     *
-     * @return The environment whitelist.
-     */
-    public @NotNull List<World.Environment> getEnvironments() {
-        return this.environments.value();
-    }
-
-    /**
-     * Gets the current locale.
-     *
-     * @return The locale.
-     */
-    public @NotNull String getLocale() {
-        final String locale = this.locale.value();
-        return locale == null ? "en_US" : locale;
-    }
-
-    /**
      * Container with spawning options.
      *
      * @author Isabel Maskrey
      * @since 1.0-SNAPSHOT
      */
     public static class SpawnOptionsContainer extends ConfigurationContainer {
-        // Configuration container with spawn height ranges.
-        final transient SpawnRangeContainer range = new SpawnRangeContainer(this);
-        // Configuration container with spawn chances.
-        final transient SpawnChancesContainer chances = new SpawnChancesContainer(this);
-        // Chances that a cave spider will spawn with a baby zombie jockey.
-        private final transient DoubleNode jockeyChance = new DoubleNode(this, "jockeyChance");
+        /**
+         * Spawn range configuration options.
+         */
+        public final transient SpawnRangeContainer range = new SpawnRangeContainer(this);
 
+        /**
+         * Controls the function which determines the percentage of spiders spawning at a given depth.
+         */
+        public final transient EnumNode<SpawnDistribution> distribution = new EnumNode<>(this, "distribution") {
+            @Override
+            protected @NotNull SpawnDistribution parse(@NotNull String value) throws IllegalArgumentException {
+                try {
+                    return SpawnDistribution.valueOf(value.toUpperCase());
+                } catch (IllegalArgumentException ex) {
+                    JavaPlugin.getPlugin(DeepCaveSpiders.class)
+                            .getLogger()
+                            .log(Level.WARNING, String.format("Invalid spawn distribution in configuration: %s. Defaulting to %s", value, this.getDefault()));
+                    return this.getDefault();
+                }
+            }
+
+            @Override
+            protected @NotNull SpawnDistribution getDefault() {
+                return SpawnDistribution.CONSTANT;
+            }
+        };
+
+        /**
+         * Spawn chances configuration options.
+         */
+        public final transient SpawnChancesContainer chances = new SpawnChancesContainer(this);
+
+        /**
+         * Chance that a cave spider will spawn a jockey.
+         */
+        public final transient DoubleNode jockeyChance = new DoubleNode(this, "jockeyChance");
+
+        /**
+         * Creates a new instance of the spawn options container.
+         *
+         * @param parent The parent configuration container.
+         */
         SpawnOptionsContainer(final ConfigurationContainer parent) {
             super(parent, "spawnOptions");
         }
@@ -148,10 +152,32 @@ public final class Configuration extends ConfigurationContainer {
      * @since 1.0-SNAPSHOT
      */
     public static class SpawnRangeContainer extends ConfigurationContainer {
-        // The minimum Y height to spawn at.
-        final transient IntegerNode minY = new IntegerNode(this, "minY");
-        // The maximum Y height to spawn at.
-        final transient IntegerNode maxY = new IntegerNode(this, "maxY");
+        /**
+         * The minimum Y value to spawn at.
+         */
+        public final transient IntegerNode minY = new IntegerNode(this, "minY") {
+            @Override
+            public @NotNull Integer defaultValue() {
+                return -64;
+            }
+        };
+
+        /**
+         * The maximum Y value to spawn at.
+         */
+        public final transient IntegerNode maxY = new IntegerNode(this, "maxY") {
+            @Override
+            public @NotNull Integer defaultValue() {
+                return -8;
+            }
+        };
+
+        /**
+         * Allows spiders to spawn below the minimum Y value.
+         * This is useful for customizing the ramp function; spawns below the minimum Y value will always use the
+         * maximum spawn chance set in the configuration file.
+         */
+        public final transient BooleanNode allowSpawnsBelowMinY = new BooleanNode(this, "allowSpawnsBelowMinY");
 
         /**
          * Creates a new spawn range configuration container.
@@ -170,12 +196,35 @@ public final class Configuration extends ConfigurationContainer {
      * @since 1.0-SNAPSHOT
      */
     public static class SpawnChancesContainer extends ConfigurationContainer {
-        // The easy difficulty spawn chances
-        final transient DoubleNode easy = new DoubleNode(this, "easy");
-        // The normal difficulty spawn chances
-        final transient DoubleNode normal = new DoubleNode(this, "normal");
-        // The hard difficulty spawn chances
-        final transient DoubleNode hard = new DoubleNode(this, "hard");
+        /**
+         * The easy difficulty spawn chances
+         */
+        public final transient DoubleNode easy = new DoubleNode(this, "easy") {
+            @Override
+            public @NotNull Double defaultValue() {
+                return 0.05D;
+            }
+        };
+
+        /**
+         * The normal difficulty spawn chances
+         */
+       public final transient DoubleNode normal = new DoubleNode(this, "normal") {
+            @Override
+            public @NotNull Double defaultValue() {
+                return 0.1D;
+            }
+       };
+
+        /**
+         * The hard difficulty spawn chances
+         */
+        public final transient DoubleNode hard = new DoubleNode(this, "hard") {
+            @Override
+            public @NotNull Double defaultValue() {
+                return 0.5D;
+            }
+        };
 
         /**
          * Creates a new spawn chances container.

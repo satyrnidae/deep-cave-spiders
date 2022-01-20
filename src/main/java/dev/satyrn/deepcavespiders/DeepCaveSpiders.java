@@ -1,18 +1,24 @@
 package dev.satyrn.deepcavespiders;
 
 import dev.satyrn.deepcavespiders.configuration.Configuration;
+import dev.satyrn.deepcavespiders.configuration.ConfigurationRegistry;
 import dev.satyrn.deepcavespiders.lang.I18n;
 import dev.satyrn.deepcavespiders.listeners.SpawnEntityListener;
+import dev.satyrn.deepcavespiders.util.SpawnDistribution;
+import dev.satyrn.papermc.api.configuration.v4.ConfigurationConsumer;
 import org.bukkit.Difficulty;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Represents the Deep Cave Spiders plugin.
@@ -21,11 +27,28 @@ import java.util.List;
  * @since 1.0-SNAPSHOT
  */
 @SuppressWarnings("unused")
-public final class DeepCaveSpiders extends JavaPlugin {
+public final class DeepCaveSpiders extends JavaPlugin implements ConfigurationConsumer<Configuration> {
     // Event listener for entity spawn events.
     private SpawnEntityListener spawnEntityListener;
     // Internationalization instance.
     private I18n i18n;
+    private String locale;
+    private double minY;
+    private double maxY;
+    private double easySpawnChance;
+    private double normalSpawnChance;
+    private double hardSpawnChance;
+    private boolean allowSpawnsBelowMinY;
+    private SpawnDistribution distribution;
+
+    /**
+     * Initializes a new instance of the plugin.
+     * @since 1.2-SNAPSHOT
+     */
+    public DeepCaveSpiders() {
+        super();
+        ConfigurationRegistry.registerConsumer(this);
+    }
 
     /**
      * Called when the plugin is enabled.
@@ -37,9 +60,10 @@ public final class DeepCaveSpiders extends JavaPlugin {
         this.registerEvents();
 
         Configuration configuration = new Configuration(this);
+        this.reloadConfiguration(configuration);
 
-        this.i18n.setLocale(configuration.getLocale());
-        this.spawnEntityListener.load(configuration);
+        this.i18n.setLocale(this.locale);
+        this.spawnEntityListener.reloadConfiguration(configuration);
 
         this.registerCommands();
 
@@ -98,7 +122,7 @@ public final class DeepCaveSpiders extends JavaPlugin {
                 if (sender.hasPermission("deepcavespiders.admin")) {
                     this.reloadConfig();
                     final Configuration configuration = new Configuration(this);
-                    this.spawnEntityListener.load(configuration);
+                    ConfigurationRegistry.reloadConfiguration(configuration);
                     sender.sendMessage(I18n.tr("command.reload"));
                 } else {
                     sender.sendMessage(I18n.tr("command.reload.deny"));
@@ -108,11 +132,23 @@ public final class DeepCaveSpiders extends JavaPlugin {
                         this.getDescription().getName(),
                         this.getDescription().getVersion(),
                         String.join(", ", this.getDescription().getAuthors()),
-                        this.spawnEntityListener.maxSpawnHeight,
-                        this.spawnEntityListener.minSpawnHeight,
-                        this.spawnEntityListener.getSpawnChance(Difficulty.EASY),
-                        this.spawnEntityListener.getSpawnChance(Difficulty.NORMAL),
-                        this.spawnEntityListener.getSpawnChance(Difficulty.HARD)));
+                        this.maxY,
+                        (this.allowSpawnsBelowMinY ? "<" : "") + this.minY,
+                        this.easySpawnChance,
+                        this.normalSpawnChance,
+                        this.hardSpawnChance,
+                        this.distribution.toString().toLowerCase(Locale.ROOT)));
+                if (sender instanceof final Player player) {
+                    double y = player.getLocation().getY();
+                    double spawnChance = this.spawnEntityListener.getSpawnChance(player.getWorld().getDifficulty(), y) * 100;
+                    if (y > this.maxY) spawnChance = 0;
+                    if (y < this.minY && !this.allowSpawnsBelowMinY) spawnChance = 0;
+                    final DecimalFormat decimalFormat = new DecimalFormat("0.0#");
+
+                    sender.sendMessage(I18n.tr("command.about.spawnChanceAtCurrentY",
+                            decimalFormat.format(player.getLocation().getY()),
+                            decimalFormat.format(spawnChance) + "%"));
+                }
             }
             return true;
         }
@@ -130,8 +166,6 @@ public final class DeepCaveSpiders extends JavaPlugin {
             final PluginManager pluginManager = this.getServer().getPluginManager();
             pluginManager.registerEvents(this.spawnEntityListener, this);
         }
-        this.spawnEntityListener = new SpawnEntityListener();
-        this.getServer().getPluginManager().registerEvents(this.spawnEntityListener, this);
     }
 
     /**
@@ -160,5 +194,17 @@ public final class DeepCaveSpiders extends JavaPlugin {
         i18n.enable();
 
         return i18n;
+    }
+
+    @Override
+    public void reloadConfiguration(@NotNull Configuration configuration) {
+        this.locale = configuration.locale.value();
+        this.minY = configuration.spawnOptions.range.minY.value();
+        this.maxY = configuration.spawnOptions.range.maxY.value();
+        this.easySpawnChance = configuration.spawnOptions.chances.easy.value();
+        this.normalSpawnChance = configuration.spawnOptions.chances.normal.value();
+        this.hardSpawnChance = configuration.spawnOptions.chances.hard.value();
+        this.distribution = configuration.spawnOptions.distribution.value();
+        this.allowSpawnsBelowMinY = configuration.spawnOptions.range.allowSpawnsBelowMinY.value();
     }
 }

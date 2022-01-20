@@ -1,3 +1,4 @@
-command.about=§a{0} v{1}§r by {2}.\nMax level: §e{3}§r\nMin level: §e{4}§r\nSpawn chance: §e{5}§r/§e{6}§r/§e{7}§r
+command.about=§a{0} v{1}§r by {2}.\nMax level: §e{3}§r\nMin level: §e{4}§r\nSpawn chance: §e{5}§r/§e{6}§r/§e{7}§r\nDistribution: §e{8}§r
+command.about.spawnChanceAtCurrentY=Spawn chance at §e{0}y§r: §e{1}§r
 command.reload=§aReloaded Deep Cave Spiders configuration!§r
 command.reload.deny=§cYou don't have permission to reload the configuration files!§r
