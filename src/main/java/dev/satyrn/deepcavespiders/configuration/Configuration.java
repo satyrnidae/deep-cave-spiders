@@ -3,7 +3,8 @@ package dev.satyrn.deepcavespiders.configuration;
 import dev.satyrn.deepcavespiders.DeepCaveSpiders;
 import dev.satyrn.deepcavespiders.util.SpawnDistribution;
 import dev.satyrn.papermc.api.configuration.v1.*;
-import dev.satyrn.papermc.api.configuration.v2.*;
+import dev.satyrn.papermc.api.configuration.v2.EnumListNode;
+import org.bukkit.Difficulty;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
@@ -37,14 +38,7 @@ public final class Configuration extends ConfigurationContainer {
     public final transient EnumListNode<Biome> biomes = new EnumListNode<>(this, "biomes") {
         @Override
         protected @NotNull Biome parse(@NotNull String value) throws IllegalArgumentException {
-            try {
-                return Biome.valueOf(value.toUpperCase(Locale.ROOT));
-            } catch (IllegalArgumentException ex) {
-                JavaPlugin.getPlugin(DeepCaveSpiders.class)
-                        .getLogger()
-                        .log(Level.WARNING, String.format("Invalid biome present in configuration: %s. This entry will be excluded.", value));
-                throw ex;
-            }
+            return Biome.valueOf(value.toUpperCase(Locale.ROOT));
         }
     };
 
@@ -54,14 +48,7 @@ public final class Configuration extends ConfigurationContainer {
     public final transient EnumListNode<World.Environment> environments = new EnumListNode<>(this, "environments") {
         @Override
         protected @NotNull World.Environment parse(@NotNull String value) throws IllegalArgumentException {
-            try {
-                return World.Environment.valueOf(value.toUpperCase(Locale.ROOT));
-            } catch (IllegalArgumentException ex) {
-                JavaPlugin.getPlugin(DeepCaveSpiders.class)
-                        .getLogger()
-                        .log(Level.WARNING, String.format("Invalid environment present in configuration: %s. This entry will be excluded.", value));
-                throw ex;
-            }
+            return World.Environment.valueOf(value.toUpperCase(Locale.ROOT));
         }
     };
 
@@ -71,16 +58,21 @@ public final class Configuration extends ConfigurationContainer {
     public final EnumListNode<EntityType> replaceEntities = new EnumListNode<EntityType>(this, "replaceEntities") {
         @Override
         protected @NotNull EntityType parse(@NotNull String value) throws IllegalArgumentException {
-            try {
-                return EntityType.valueOf(value.toUpperCase(Locale.ROOT));
-            } catch (IllegalArgumentException ex) {
-                JavaPlugin.getPlugin(DeepCaveSpiders.class)
-                        .getLogger()
-                        .log(Level.WARNING, String.format("Invalid replaceable entity type present in configuration: %s. This entry will be excluded.", value));
-                throw ex;
-            }
+            return EntityType.valueOf(value.toUpperCase(Locale.ROOT));
+
         }
     };
+
+    /**
+     * Whether to enable debug logging.
+     */
+    public final @NotNull BooleanNode debug = new BooleanNode(this, "debug");
+
+    /**
+     * Whether to enable plugin metrics.
+     */
+    public final @NotNull BooleanNode metrics = new BooleanNode(this, "metrics");
+
 
     /**
      * Creates a new instance of the plugin configuration.
@@ -88,7 +80,7 @@ public final class Configuration extends ConfigurationContainer {
      * @param plugin The plugin.
      */
     public Configuration(final Plugin plugin) {
-        super(plugin.getConfig());
+        super(plugin);
     }
 
     /**
@@ -109,14 +101,7 @@ public final class Configuration extends ConfigurationContainer {
         public final transient EnumNode<SpawnDistribution> distribution = new EnumNode<>(this, "distribution") {
             @Override
             protected @NotNull SpawnDistribution parse(@NotNull String value) throws IllegalArgumentException {
-                try {
-                    return SpawnDistribution.valueOf(value.toUpperCase());
-                } catch (IllegalArgumentException ex) {
-                    JavaPlugin.getPlugin(DeepCaveSpiders.class)
-                            .getLogger()
-                            .log(Level.WARNING, String.format("Invalid spawn distribution in configuration: %s. Defaulting to %s", value, this.getDefault()));
-                    return this.getDefault();
-                }
+                return SpawnDistribution.valueOf(value.toUpperCase());
             }
 
             @Override
@@ -133,7 +118,7 @@ public final class Configuration extends ConfigurationContainer {
         /**
          * Chance that a cave spider will spawn a jockey.
          */
-        public final transient DoubleNode jockeyChance = new DoubleNode(this, "jockeyChance");
+        public final transient DoubleNode jockeyChance = new DoubleNode(this, "jockeyChance", 0D, 1D);
 
         /**
          * Creates a new instance of the spawn options container.
@@ -155,7 +140,7 @@ public final class Configuration extends ConfigurationContainer {
         /**
          * The minimum Y value to spawn at.
          */
-        public final transient IntegerNode minY = new IntegerNode(this, "minY") {
+        public final transient IntegerNode minY = new IntegerNode(this, "minY", -64, 320) {
             @Override
             public @NotNull Integer defaultValue() {
                 return -64;
@@ -165,7 +150,7 @@ public final class Configuration extends ConfigurationContainer {
         /**
          * The maximum Y value to spawn at.
          */
-        public final transient IntegerNode maxY = new IntegerNode(this, "maxY") {
+        public final transient IntegerNode maxY = new IntegerNode(this, "maxY", -64, 320) {
             @Override
             public @NotNull Integer defaultValue() {
                 return -8;
@@ -199,7 +184,7 @@ public final class Configuration extends ConfigurationContainer {
         /**
          * The easy difficulty spawn chances
          */
-        public final transient DoubleNode easy = new DoubleNode(this, "easy") {
+        private final transient DoubleNode easy = new DoubleNode(this, "easy", 0D, 1D) {
             @Override
             public @NotNull Double defaultValue() {
                 return 0.05D;
@@ -209,17 +194,17 @@ public final class Configuration extends ConfigurationContainer {
         /**
          * The normal difficulty spawn chances
          */
-       public final transient DoubleNode normal = new DoubleNode(this, "normal") {
+        private final transient DoubleNode normal = new DoubleNode(this, "normal", 0D, 1D) {
             @Override
             public @NotNull Double defaultValue() {
                 return 0.1D;
             }
-       };
+        };
 
         /**
          * The hard difficulty spawn chances
          */
-        public final transient DoubleNode hard = new DoubleNode(this, "hard") {
+        private final transient DoubleNode hard = new DoubleNode(this, "hard", 0D, 1D) {
             @Override
             public @NotNull Double defaultValue() {
                 return 0.5D;
@@ -233,6 +218,16 @@ public final class Configuration extends ConfigurationContainer {
          */
         SpawnChancesContainer(ConfigurationContainer parent) {
             super(parent, "chances");
+        }
+
+        /**
+         * Gets the value for a given world difficulty.
+         *
+         * @param difficulty The world difficulty.
+         * @return The value for the given difficulty.
+         */
+        public double value(final @NotNull Difficulty difficulty) {
+            return difficulty == Difficulty.HARD ? this.hard.value() : difficulty == Difficulty.NORMAL ? this.normal.value() : difficulty == Difficulty.EASY ? this.easy.value() : 0D;
         }
     }
 }

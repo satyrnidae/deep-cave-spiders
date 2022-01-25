@@ -10,6 +10,9 @@ commands:
   deepcavespiders:
     description: Manages the plugin.
     usage: /<command>
+    aliases:
+      - spiders
+      - dcs
 permissions:
   deepcavespiders.admin:
     default: op

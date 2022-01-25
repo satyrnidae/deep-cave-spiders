@@ -79,3 +79,10 @@ environments:
 # Valid values: https://papermc.io/javadocs/paper/1.18/org/bukkit/entity/EntityType.html
 replaceEntities:
   - spider
+# Whether to show debug output in the console.
+# Defaults to false.
+debug: false
+# Whether to send usage telemetry.
+# Uses bStats (https://bstats.org)
+# Defaults to false, initially set to true.
+metrics: true

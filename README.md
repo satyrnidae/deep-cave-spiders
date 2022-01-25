@@ -14,13 +14,17 @@ This plugin lets you have a small taste of that as you dig deeper and yet deeper
 
 Caving has rarely been so toxic!
 
+## Metrics
+
+This plugin uses bStats to collect some analytics about your current system setup and plugin configuration. Metrics collection is optional. If you installed a previous version of the plugin, you are already opted-out of metrics collection. If you want to opt-out on version 1.3.0 or higher, set the "metrics" option in the configuration file to "false", or comment or remove the line. Thanks!
+
 ## In-Depth Configuration
 
 Tweak to your heart's content with in-depth configuration options, from spawn ranges to spawn chances, jockey chances, biomes, and environments!
 
 <details><summary>Expand to Preview Default Configuration</summary>
 
-*As of 1.0-SNAPSHOT:*
+*As of 1.3.0:*
 ```yaml
 # The locale to use while translating chat messages.
 # Default value: en_US.
@@ -35,6 +39,20 @@ spawnOptions:
     # The maximum Y level that cave spiders will spawn.
     # Default value: -8
     maxY: -8
+    # Allow spiders to spawn below the minimum Y height.
+    # This is useful for customizing the spawn distribution ramp function; spawns below the minimum Y value are
+    #   guaranteed to use a constant spawn chance as set in the chances section below.
+    # Defaults to false.
+    allowSpawnsBelowMinY: false
+  # Spawn distribution function. Affects how often cave spiders spawn in the world.
+  # Valid values are constant, hyperbolic, linear, and logarithmic
+  # In order of slowest to quickest ramp-up speed:
+  # - Hyperbolic distribution ramps up slowly at first but increases in likelihood the further down you go.
+  # - Linear distribution ramps up at a constant rate the further down you go.
+  # - Logarithmic distribution ramps up very quickly at first but slows down the further down you go.
+  # - Constant distribution is the same no matter what depth the spider is spawning at.
+  # Defaults to constant.
+  distribution: constant
   # Chances that a cave spider will replace a normal spider within the given range.
   # Settings are between 0 and 1, separated by difficulty level.
   chances:
@@ -83,6 +101,19 @@ biomes:
 # Valid values: https://papermc.io/javadocs/paper/1.18/org/bukkit/World.Environment.html
 environments:
   - normal
+# A list of all of the entity types that cave spiders can replace.
+# Defaults to include only spiders.
+# Only replaces natural spawns.
+# Valid values: https://papermc.io/javadocs/paper/1.18/org/bukkit/entity/EntityType.html
+replaceEntities:
+  - spider
+# Whether to show debug output in the console.
+# Defaults to false.
+debug: false
+# Whether to send usage telemetry.
+# Uses bStats (https://bstats.org)
+# Defaults to false, initially set to true.
+metrics: true
 ```
 </details>
 
